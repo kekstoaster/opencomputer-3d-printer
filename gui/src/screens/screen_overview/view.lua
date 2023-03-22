@@ -11,6 +11,7 @@ local Button = require("gui/component/component_button")
 local LabelRow = require("gui/component/component_label_row")
 local HorizontalCenter = require("gui/component/component_horizontal_center")
 local VerticalBox = require("gui/component/component_vertical_box")
+local TextInput = require("gui/component/component_input")
 
 local OverviewView, static, base = class(View)
 
@@ -28,10 +29,18 @@ function OverviewView:new (controller)
     self.__ctrl = controller
     self.__model = nil
 
+
     local move = 32
+    local lbl_count = LabelRow{x=10, y=34, text="Anzahl: "}
+    local txt_count = TextInput{x=20, y=33, text=1}
 
     function print_fn()
-        component.printer3d.commit()
+        local num = tonumber(txt_count:get_text())
+        if num <= 1 then
+            component.printer3d.commit()
+        else
+            event.push("screen", "print", self.__lbl_object_name:get_text(), num)
+        end
     end
 
     function texture_fn()
@@ -43,7 +52,10 @@ function OverviewView:new (controller)
     end
 
     self.__lbl_missing_count = LabelRow{x=10, y=15, text="<< leer >>"}
+    self.__lbl_object_name = LabelRow{x=10, y=30, text="<< leer >>"}
     self.__box = VerticalBox{x=10, y=17}
+
+
 
     self.__btn_texture = Button{text="Texturen", x=10, y=40, click=texture_fn, padding=10, name="btn"}
 
@@ -52,6 +64,9 @@ function OverviewView:new (controller)
     local hc_load = HorizontalCenter{component=btn_load, y=40}
 
     self:add_component(Header{text="3D Drucker - Einstellungen", y=4})
+    self:add_component(self.__lbl_object_name)
+    self:add_component(lbl_count)
+    self:add_component(txt_count)
     self:add_component(self.__lbl_missing_count)
     self:add_component(self.__box)
     self:add_component(btn_back)
@@ -68,8 +83,10 @@ function OverviewView:init()
 
     if self.__model:get_name() ~= nil then
         component.printer3d.setLabel(self.__model:get_name())
+        self.__lbl_object_name:set_text(self.__model:get_name())
     else
         component.printer3d.setLabel("Eine böse Macht")
+        self.__lbl_object_name:set_text("Eine böse Macht")
     end
 
     local shapes = self.__model:get_shapes()

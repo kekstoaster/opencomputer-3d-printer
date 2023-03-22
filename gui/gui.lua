@@ -5,6 +5,7 @@ local shell = require("shell")
 local StartView = require("src/screens/screen_start/index")
 local OverviewView = require("src/screens/screen_overview/index")
 local TextureView = require("src/screens/screen_texture/index")
+local PrintView = require("src/screens/screen_print/index")
 
 local GuiApp = require("gui/app")
 local BlockStorage = require("src/block_storage")
@@ -27,10 +28,12 @@ app:set_state("texture", texture_loader)
 local screen_start = StartView(app)
 local screen_overview = OverviewView(app)
 local screen_texture = TextureView(app)
+local screen_print = PrintView(app)
 
 app:add_screen("start", screen_start)
 app:add_screen("overview", screen_overview)
 app:add_screen("texture", screen_texture)
+app:add_screen("print", screen_print)
 
 app:run()
 
